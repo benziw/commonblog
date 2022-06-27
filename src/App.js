@@ -1,25 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
 
-function App() {
+import CreatePost from "./components/CreatePost";
+import DisplayPosts from "./components/DisplayPosts";
+
+export default function App() {
+
+  const [openCreatePost, setOpenCreatePost] = useState(false);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+      <button onClick={() => {setOpenCreatePost(true); console.log(document.getElementById('portal'))}}>create post</button>
+
+      <CreatePost open={openCreatePost} onClose={() => setOpenCreatePost(false)}/>
+
+      <DisplayPosts/>
+
     </div>
   );
 }
-
-export default App;
