@@ -3,8 +3,14 @@ import ReactDOM from 'react-dom';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase-config.js';
 
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField'
+import SendIcon from '@mui/icons-material/Send';
+import CancelIcon from '@mui/icons-material/Cancel';
+import TextareaAutosize from "@mui/material/TextareaAutosize";
+import Grid from '@mui/material/Grid';
+
 const testStyle = {
-  background : '#0000FF',
   zIndex : 1000,
 
   position: 'fixed',
@@ -12,6 +18,8 @@ const testStyle = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
 
+  background : '#FFF',
+  padding: '1em',
 }
 
 export default function CreatePost(props){
@@ -40,29 +48,73 @@ export default function CreatePost(props){
     props.onClose();
   };
 
-  if(props.open){
-    return ReactDOM.createPortal(
-      <div className="createnewpost" style={testStyle}>
+  return (
+    <div className="createPostContainer" style={testStyle}>
+
+    <Grid container 
+      spacing={2}
+      direction="row"
+      justifyContent="space-between"
+      alignItems='baseline'
+    >
+
+      <Grid item xs={6}>
       <h1>create new post</h1>
-        <form>
-          <input
-            type="text"
-            placeholder="title"
-            onChange={ e => {
-              setTitle(e.target.value);
-            }}
-          ></input>
-          <textarea
-            placeholder="content"
-            onChange={ e => {
-              setContent(e.target.value);
-            }}>
-          </textarea>
-          <button onClick={postToDB}>submit post</button>
-          <button onClick={props.onClose}>close</button>
-        </form>
-      </div>,
-      document.getElementById('portal')
-    );
-  } else {return null}
+      </Grid>
+
+      <Grid container item xs={6}
+        spacing={2}
+        direction='row'
+        justifyContent='flex-end'
+      >
+        <Grid item>
+        <Button
+          onClick={postToDB}
+          variant='contained'
+          color='primary'
+          endIcon={<SendIcon />}
+          >submit
+        </Button>
+        </Grid>
+
+        <Grid item>
+        <Button
+          onClick={props.onClose}
+          variant='contained'
+          color='error'
+          endIcon={<CancelIcon />}
+          >close
+        </Button>
+        </Grid>
+      
+      
+      </Grid>
+        
+
+      <Grid item xs={12}>
+      <TextField
+          placeholder="title"
+          onChange={e => {
+            setTitle(e.target.value);
+          }}
+        ></TextField>
+      </Grid>
+
+      <Grid item xs={12}>
+      <TextareaAutosize
+          placeholder="content"
+          minRows={12}
+          style={{ width: '80%' }}
+          onChange={e => {
+            setContent(e.target.value);
+          }}>
+
+        </TextareaAutosize>
+      </Grid>
+        
+ 
+        
+    </Grid>
+    </div>
+  )
 }

@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase-config';
 import Post from './Post.js';
+
+import Grid from '@mui/material/Grid';
+
 
 export default function DisplayPosts(){
 
@@ -16,15 +19,23 @@ export default function DisplayPosts(){
     };
 
     getPostsFromDB();
-
-    //setPostsList(postsList.sort((p1,p2) => p2.postid - p1.postid ));
   }, []);
 
-
-
   return (
-    <div className="displayposts">
-      {postsList.map(post => <Post title={post.title} content={post.content} postid={post.postid}/>)}
+    <div className="displayPostsContainer">
+
+    <Grid
+      spacing={2}
+      justifyContent='center'
+    >
+      {postsList.map(post => 
+        <Grid item xs={12}>
+          <Post title={post.title} content={post.content} postid={post.postid}/>
+        </Grid>
+      )}
+    </Grid>
+    
+      
     </div>
   );
 }
