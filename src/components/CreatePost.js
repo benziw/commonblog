@@ -19,6 +19,9 @@ const testStyle = {
   transform: 'translate(-50%, -50%)',
 
   background : '#FFF',
+  borderRadius: '25px',
+  boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+
   padding: '1em',
 }
 
@@ -43,7 +46,7 @@ export default function CreatePost(props){
       postid: Date.now()
     });
     
-    window.location.reload();
+    //window.location.reload();
 
     props.onClose();
   };

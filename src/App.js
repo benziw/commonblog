@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import CreatePost from "./components/CreatePost";
 import DisplayPosts from "./components/DisplayPosts";
@@ -12,29 +12,47 @@ import AnnouncementIcon from '@mui/icons-material/Announcement'
 
 import Portal from '@mui/base/Portal';
 
+const appStyle = {
+  display : 'flex',
+  flexDirection : 'column',
+  justifyContent : 'center',
+  alignItems : 'center',
+}
+
 export default function App() {
 
   const [openCreatePost, setOpenCreatePost] = useState(false);
   const [censor, setCensor] = useState(false);
+  const [numPostsToRender, setNumPostsToRender] = useState(5);
 
   const createPostContainer = React.useRef(null);
 
-  const actions = [
+  const speedDialActions = [
     {icon : <SendIcon/>, name : 'post', onClick : () => setOpenCreatePost(true)},
     {icon : <AnnouncementIcon/>, name : 'censor', onClick : () => setCensor(!censor)}
   ]
 
-  return (
-    <div className="App">
+  
 
-      <h1>common blog</h1>
+  return (
+    <div className="App" style={appStyle}>
+
+      <div className="header"
+        style={{
+          width : '100%',
+          display : 'flex',
+          justifyContent : 'center',
+        }}
+      >
+        <h1>common blog</h1>
+      </div>
 
       <SpeedDial
         ariaLabel="SpeedDial basic example"
-        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        sx={{ position: 'fixed', bottom: 16, right: 16 }}
         icon={<SpeedDialIcon />}
       >
-        {actions.map((action) => (
+        {speedDialActions.map((action) => (
           <SpeedDialAction
             tooltipOpen
             key={action.name}
@@ -45,15 +63,26 @@ export default function App() {
         ))}
       </SpeedDial>
 
-      {/*<div className="options">
-        <Button 
-          onClick={() => setOpenCreatePost(true)}
-          variant='contained'
-          >create post
-          </Button>
-      </div>*/}
+      <DisplayPosts
+        censor={censor}
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+        numPostsToRender={numPostsToRender}
+        key={numPostsToRender}
+      />
 
-      <DisplayPosts censor={censor}/>
+      <Button
+        onClick={(e) => {
+          e.preventDefault();
+          setNumPostsToRender(numPostsToRender + 5)}
+          }
+        variant='secondary'
+      >more posts
+      </Button>
 
       {openCreatePost ? (
         <Portal container={createPostContainer.current}>
@@ -62,7 +91,6 @@ export default function App() {
         
       ) : null}
 
-      {/*<CreatePost open={openCreatePost} onClose={() => setOpenCreatePost(false)}/>*/}
     </div>
   );
 }

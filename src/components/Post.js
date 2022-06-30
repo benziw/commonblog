@@ -1,9 +1,18 @@
 
 
 const postStyle = {
+  display : 'flex',
+  flexDirection : 'column',
+
   background : '#FFF',
-  height : '400px',
+ 
   width : '600px',
+
+  borderRadius: '25px',
+  boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+
+  padding : '0px 1em',
+  margin : '1em',
 }
 
 export default function Post(props){
@@ -16,8 +25,16 @@ export default function Post(props){
 
   return (
     <div className="post" style={postStyle}>
-      <h3>{props.title}</h3>
-      <h4>{formatDate(new Date(props.postid))}</h4>
+
+      <div className="postHeader"
+        style={{
+          width : '100%',
+        }}
+      >
+        <h3 style={{float : 'left'}}>{props.title}</h3>
+        <h4 style={{float : 'right'}}>{formatDate(new Date(props.postid))}</h4>
+      </div>
+
       <p>{props.content}</p>
     </div>
   );
