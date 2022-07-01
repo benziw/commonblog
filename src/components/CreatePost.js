@@ -46,7 +46,7 @@ export default function CreatePost(props){
       postid: Date.now()
     });
     
-    //window.location.reload();
+    window.location.reload();
 
     props.onClose();
   };

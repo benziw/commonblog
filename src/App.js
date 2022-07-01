@@ -23,7 +23,6 @@ export default function App() {
 
   const [openCreatePost, setOpenCreatePost] = useState(false);
   const [censor, setCensor] = useState(false);
-  const [numPostsToRender, setNumPostsToRender] = useState(5);
 
   const createPostContainer = React.useRef(null);
 
@@ -31,8 +30,6 @@ export default function App() {
     {icon : <SendIcon/>, name : 'post', onClick : () => setOpenCreatePost(true)},
     {icon : <AnnouncementIcon/>, name : 'censor', onClick : () => setCensor(!censor)}
   ]
-
-  
 
   return (
     <div className="App" style={appStyle}>
@@ -71,18 +68,7 @@ export default function App() {
           left: '50%',
           transform: 'translate(-50%, -50%)',
         }}
-        numPostsToRender={numPostsToRender}
-        key={numPostsToRender}
       />
-
-      <Button
-        onClick={(e) => {
-          e.preventDefault();
-          setNumPostsToRender(numPostsToRender + 5)}
-          }
-        variant='secondary'
-      >more posts
-      </Button>
 
       {openCreatePost ? (
         <Portal container={createPostContainer.current}>
