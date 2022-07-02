@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import CreatePost from "./components/CreatePost";
 import DisplayPosts from "./components/DisplayPosts";
 
-import Button from '@mui/material/Button';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
@@ -22,8 +21,7 @@ const appStyle = {
 export default function App() {
 
   const [openCreatePost, setOpenCreatePost] = useState(false);
-  const [censor, setCensor] = useState(false);
-  const [numPostsToRender, setNumPostsToRender] = useState(5);
+  const [censor, setCensor] = useState(true);
 
   const createPostContainer = React.useRef(null);
 
@@ -32,20 +30,29 @@ export default function App() {
     {icon : <AnnouncementIcon/>, name : 'censor', onClick : () => setCensor(!censor)}
   ]
 
-  
-
   return (
     <div className="App" style={appStyle}>
 
       <div className="header"
         style={{
-          width : '100%',
+          width : '25%',
           display : 'flex',
           justifyContent : 'center',
+          flexDirection : 'column',
+          alignItems : 'center',
+
+          color : '#DEF2F1',
+          background : '#2B7A78',
+          borderRadius: '25px',
+          boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
         }}
       >
         <h1>common blog</h1>
+
+        <p><em>a blog for all</em></p>
       </div>
+
+      
 
       <SpeedDial
         ariaLabel="SpeedDial basic example"
@@ -71,24 +78,12 @@ export default function App() {
           left: '50%',
           transform: 'translate(-50%, -50%)',
         }}
-        numPostsToRender={numPostsToRender}
-        key={numPostsToRender}
       />
-
-      <Button
-        onClick={(e) => {
-          e.preventDefault();
-          setNumPostsToRender(numPostsToRender + 5)}
-          }
-        variant='secondary'
-      >more posts
-      </Button>
 
       {openCreatePost ? (
         <Portal container={createPostContainer.current}>
-          <CreatePost onClose={() => setOpenCreatePost(false)}/>
+          <CreatePost onClose={() => setOpenCreatePost(false)} />
         </Portal>
-        
       ) : null}
 
     </div>

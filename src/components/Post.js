@@ -1,10 +1,8 @@
-
-
 const postStyle = {
   display : 'flex',
   flexDirection : 'column',
 
-  background : '#FFF',
+  background : '#FEFFFF',
  
   width : '600px',
 

@@ -1,61 +1,106 @@
 import { useEffect, useState } from 'react';
-import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, startAfter } from 'firebase/firestore';
 import { db } from '../firebase-config';
+
 import Post from './Post.js';
+import Button from '@mui/material/Button';
 
-import Grid from '@mui/material/Grid';
+const containerStyle={
+  diplay : 'grid',
+  gridTemplateRows : '1fr',
+}
 
-
-export default function DisplayPosts(props){
+export default function DisplayPosts(){
 
   const [postsList, setPostsList] = useState([]);
-  const [newPosts, setNewPosts] = useState([]);
-  const [lastPostId, setLastPostId] = useState(Number.MAX_SAFE_INTEGER);
+  const [lastPostDoc, setLastPostDoc] = useState(null);
+  const [loadPosts, setLoadPosts] = useState(true);
+  const [morePosts, setMorePosts] = useState(true);
 
   const postsCollectionRef = collection(db, "posts");
 
-  /* update posts 5 at a time */
+  /* get 5 posts from db initially */
   useEffect(() => {
 
-    const q = query(postsCollectionRef, where('postid', '<', lastPostId), orderBy("postid", "desc"), limit(5));
+    const q = (lastPostDoc === null ?
+                query(postsCollectionRef, orderBy("postid", "desc"), limit(5)) :
+                query(postsCollectionRef,  orderBy("postid", "desc"), startAfter(lastPostDoc), limit(5))
+              );
 
     const getPostsFromDB = async () => {
       const data = await getDocs(q);
-      const fivemore = data.docs.map((doc) => ({ ...doc.data()}));
-      
-      setNewPosts(fivemore);
-      setPostsList(postsList.concat(newPosts));
-      setLastPostId(fivemore[4].postid);
+      console.log(data);
 
-      console.log(`${newPosts.length} \n ${fivemore.map(post => post.title)} \n ${lastPostId} \n ${postsList.length}`);
+      if (data.docs.length < 1) {
+        setMorePosts(false);
+      }
+      else {
+        setLastPostDoc(data.docs[data.docs.length - 1]);
+        const fivemore = data.docs.map((doc) => ({ ...doc.data() }));
+
+        setPostsList(postsList.concat(fivemore));
+      }
+
     };
 
     getPostsFromDB();
+    console.log(q);
+    //console.log('DisplayPosts useeffect fired');
+    //console.log(`${postsList.length} ${lastPostDoc}`)
+  }, [loadPosts]);
 
-  }, []);
+  /* get 5 more posts from db */
+  const morePostsOnClick = () => {
+    setLoadPosts(!loadPosts);
+  }
 
-  /* this updates posts effectively */
-  // useEffect(() => {
-
-  //   const q = query(postsCollectionRef, orderBy("postid", "desc"));
-
-  //   const getPostsFromDB = async () => {
-  //     const data = await getDocs(q);
-  //     setPostsList(data.docs.map((doc) => ({ ...doc.data()})));
-  //   };
-
-  //   getPostsFromDB();
-  // }, []);
 
   return (
-    <div className="displayPostsContainer">
+    <div className="displayPostsContainer" style={containerStyle}>
 
-      {newPosts.map(post => 
-        <Grid item xs={12} key={post.postid}>
-          <Post title={post.title} content={post.content} postid={post.postid}/>
-        </Grid>
+      {postsList.map(post => 
+        <Post title={post.title} content={post.content} postid={post.postid} key={post.postid}/>
       )}
+
+
+      {morePosts ? (
+        <Button
+          onClick={() => morePostsOnClick()}
+          variant='contained'
+          color='secondary'
+          sx={{justifySelf : 'center', width : '80%', marginLeft : '10%'}}
+        >more posts
+        </Button>
+      ) :
+        <Button
+          onClick={() => morePostsOnClick()}
+          variant='contained'
+          color='info'
+          disabled={true}
+          sx={{justifySelf : 'center', width : '80%', marginLeft : '10%'}}
+        >no more posts in db!
+        </Button>
+
+      }
+
    
     </div>
   );
 }
+
+
+
+
+
+/* this updates posts effectively */
+//  useEffect(() => {
+
+//  const q = query(postsCollectionRef, orderBy("postid", "desc"));
+
+//    const getPostsFromDB = async () => {
+//       const data = await getDocs(q);
+//      setPostsList(data.docs.map((doc) => ({ ...doc.data()})));
+//   };
+
+//     getPostsFromDB();
+//   }, []);
