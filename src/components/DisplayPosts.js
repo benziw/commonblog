@@ -1,18 +1,21 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { collection, getDocs, query, orderBy, limit, startAfter } from 'firebase/firestore';
 import { db } from '../firebase-config';
-import Post from './Post.js';
 
+import Post from './Post.js';
 import Button from '@mui/material/Button';
 
+const containerStyle={
+  diplay : 'grid',
+  gridTemplateRows : '1fr',
+}
 
 export default function DisplayPosts(){
 
   const [postsList, setPostsList] = useState([]);
   const [lastPostDoc, setLastPostDoc] = useState(null);
-
   const [loadPosts, setLoadPosts] = useState(true);
-
+  const [morePosts, setMorePosts] = useState(true);
 
   const postsCollectionRef = collection(db, "posts");
 
@@ -28,41 +31,68 @@ export default function DisplayPosts(){
       const data = await getDocs(q);
       console.log(data);
 
-      setLastPostDoc(data.docs[data.docs.length-1]);
-      const fivemore = data.docs.map((doc) => ({ ...doc.data()}));
-      
-      //setNewPosts(fivemore);
-      setPostsList(postsList.concat(fivemore));
+      if (data.docs.length < 1) {
+        setMorePosts(false);
+      }
+      else {
+        setLastPostDoc(data.docs[data.docs.length - 1]);
+        const fivemore = data.docs.map((doc) => ({ ...doc.data() }));
+
+        setPostsList(postsList.concat(fivemore));
+      }
+
     };
 
     getPostsFromDB();
-    console.log('DisplayPosts useeffect fired');
-    console.log(`${postsList.length} ${lastPostDoc}`)
+    console.log(q);
+    //console.log('DisplayPosts useeffect fired');
+    //console.log(`${postsList.length} ${lastPostDoc}`)
   }, [loadPosts]);
 
   /* get 5 more posts from db */
   const morePostsOnClick = () => {
-
     setLoadPosts(!loadPosts);
-    
-    // const q = query(postsCollectionRef,  orderBy("postid", "desc"), startAfter(lastDocRef), limit(5));
-
-    // const getPostsFromDB = async () => {
-    //   const data = await getDocs(q);
-    //   setLastPostDoc(data.docs[data.length-1]);
-
-    //   const fivemore = data.docs.map((doc) => ({ ...doc.data()}));
-      
-    //   //setNewPosts(fivemore);
-    //   setPostsList(postsList.concat(fivemore));
-    // };
-
-    // getPostsFromDB();
-    // console.log('DisplayPosts morePostsOnClick fired');
-    // console.log(`${postsList.length} ${lastPostDoc}`)
   }
 
-  /* this updates posts effectively */
+
+  return (
+    <div className="displayPostsContainer" style={containerStyle}>
+
+      {postsList.map(post => 
+        <Post title={post.title} content={post.content} postid={post.postid} key={post.postid}/>
+      )}
+
+
+      {morePosts ? (
+        <Button
+          onClick={() => morePostsOnClick()}
+          variant='contained'
+          color='secondary'
+          sx={{justifySelf : 'center', width : '80%', marginLeft : '10%'}}
+        >more posts
+        </Button>
+      ) :
+        <Button
+          onClick={() => morePostsOnClick()}
+          variant='contained'
+          color='info'
+          disabled={true}
+          sx={{justifySelf : 'center', width : '80%', marginLeft : '10%'}}
+        >no more posts in db!
+        </Button>
+
+      }
+
+   
+    </div>
+  );
+}
+
+
+
+
+
+/* this updates posts effectively */
 //  useEffect(() => {
 
 //  const q = query(postsCollectionRef, orderBy("postid", "desc"));
@@ -74,21 +104,3 @@ export default function DisplayPosts(){
 
 //     getPostsFromDB();
 //   }, []);
-
-  return (
-    <div className="displayPostsContainer" style={{diplay : 'flex', flexDirection : 'column', justifyContent : 'center', alignItems : 'center'}}>
-
-      {postsList.map(post => 
-        <Post title={post.title} content={post.content} postid={post.postid} key={post.postid}/>
-      )}
-
-      <Button
-        onClick={() => morePostsOnClick()}
-        variant='contained'
-        color='secondary'
-      >more posts
-      </Button>
-   
-    </div>
-  );
-}
