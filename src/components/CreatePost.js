@@ -1,42 +1,44 @@
 import React, { useState } from "react";
+import ReactDOM from 'react-dom';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase-config.js';
+
+import '../css/CreatePost.css';
 
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField'
 import SendIcon from '@mui/icons-material/Send';
 import CancelIcon from '@mui/icons-material/Cancel';
 import TextareaAutosize from "@mui/material/TextareaAutosize";
-import Alert from "@mui/material/Alert";
-import Portal from '@mui/base/Portal';
 
-const testStyle = {
-  zIndex : 1000,
+import { motion } from "framer-motion";
 
-  display : 'flex',
-  flexDirection : 'column',
+const dropIn = {
+  hidden: {
+    y: "-100vh",
+    opacity: 0,
+  },
+  visible: {
+    y: "0",
+    opacity: 1,
+    transition: {
+      duration: 0.1,
+      type: "spring",
+      damping: 25,
+      stiffness: 500,
+    },
+  },
+  exit: {
+    y: "100vh",
+    opacity: 0,
+  },
+};
 
-  width : '800px',
-
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-
-  background : '#FEFFFF',
-  borderRadius: '25px',
-  boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-
-  padding: '1em 2em',
-}
-
-export default function CreatePost(props){
+export default function CreatePost(props) {
 
   const [title, setTitle] = useState('');
-  const [content,setContent] = useState('');
+  const [content, setContent] = useState('');
   const [warning, setWarning] = useState('');
-
-  const createAlertContainer = React.useRef(null);
 
   const postsCollection = collection(db, "posts");
 
@@ -55,10 +57,6 @@ export default function CreatePost(props){
 
       e.preventDefault();
 
-      // console.log(title);
-      // console.log(content);
-      // console.log(Date.now())
-
       await addDoc(postsCollection, {
         title: title,
         content: content,
@@ -68,64 +66,66 @@ export default function CreatePost(props){
       window.location.reload();
 
       props.onClose();
-
-      
     }
   };
 
-  return (
-    <div className="createPostContainer" style={testStyle}>
+  return ReactDOM.createPortal(
+    <div className='portalBackdrop'>
+      <motion.div
+        onClick={(e) => e.stopPropagation()}  // Prevent click from closing modal
+        variants={dropIn}
+        initial="hidden"
+        animate="visible"
+        exit="exit">
 
-      <h1>create new post</h1>
+        <div className="createPostContainer">
 
-      <TextField
-        autoFocus={true}
-        color='secondary'
-        placeholder="title"
-        required={true}
-        onChange={e => {
-          setTitle(e.target.value);
-          setWarning('');
-        }}
-      ></TextField>
+          <h1>create new post</h1>
 
-      <TextareaAutosize
-        color='primary'
-        placeholder="content"
-        minRows={12}
-        required={true}
-        onChange={e => {
-          setContent(e.target.value);
-          setWarning('');
-        }}>
+          <TextField
+            autoFocus={true}
+            color='secondary'
+            placeholder="title"
+            required={true}
+            onChange={e => {
+              setTitle(e.target.value);
+              setWarning('');
+            }}
+          ></TextField>
 
-      </TextareaAutosize>
+          <TextareaAutosize
+            color='primary'
+            placeholder="content"
+            minRows={12}
+            required={true}
+            onChange={e => {
+              setContent(e.target.value);
+              setWarning('');
+            }}>
 
-      <div className='buttonsContainer' style={{display : 'flex', justifyContent : 'space-evenly'}}>
-        <Button
-          onClick={postToDB}
-          variant='contained'
-          color='primary'
-          endIcon={<SendIcon />}
-        >submit
-        </Button>
+          </TextareaAutosize>
 
-        <Button
-          onClick={props.onClose}
-          variant='contained'
-          color='error'
-          endIcon={<CancelIcon />}
-        >close
-        </Button>
+          <div className='buttonsContainer' style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+            <Button
+              onClick={postToDB}
+              variant='contained'
+              color='primary'
+              endIcon={<SendIcon />}
+            >submit
+            </Button>
 
-      </div>
+            <Button
+              onClick={props.onClose}
+              variant='contained'
+              color='error'
+              endIcon={<CancelIcon />}
+            >close
+            </Button>
 
-      {warning.length !== 0 ? (
-        <Portal container={createAlertContainer.current}>
-          <Alert severity=  "error" sx={{zIndex : 1001}}>{warning}</Alert>
-        </Portal>
-      ) : null}
+          </div>
 
+        </div>
+      </motion.div>
     </div>
-  )
+    , document.getElementById('portal'))
 }

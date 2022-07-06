@@ -1,19 +1,37 @@
-const postStyle = {
-  display : 'flex',
-  flexDirection : 'column',
+import { motion } from 'framer-motion';
+import '../css/Post.css';
 
-  background : '#FEFFFF',
- 
-  width : '600px',
+const postStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+
+  background: '#FEFFFF',
+
+  width: '600px',
 
   borderRadius: '25px',
   boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
 
-  padding : '0px 1em',
-  margin : '1em',
+  padding: '0px 1em',
+  margin: '1em',
 }
 
-export default function Post(props){
+const expand = {
+  hidden: {
+    scale : 0.1
+  },
+  visible: {
+    scale : 1,
+    transition: {
+      duration: 0.1,
+      type: "spring",
+      damping: 25,
+      stiffness: 500,
+    },
+  },
+};
+
+export default function Post(props) {
 
   const formatDate = date => {
     let formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${date.getHours() % 12 || 12}:${date.getMinutes()} ${date.getHours() > 11 ? 'pm' : 'am'}`;
@@ -22,18 +40,25 @@ export default function Post(props){
   }
 
   return (
-    <div className="post" style={postStyle}>
+    <motion.div
+        onClick={(e) => e.stopPropagation()}  // Prevent click from closing modal
+        variants={expand}
+        initial="hidden"
+        animate="visible"
+    >
+      <div className="post">
 
-      <div className="postHeader"
-        style={{
-          width : '100%',
-        }}
-      >
-        <h3 style={{float : 'left'}}>{props.title}</h3>
-        <h4 style={{float : 'right'}}>{formatDate(new Date(props.postid))}</h4>
+        <div className="postHeader"
+          style={{
+            width: '100%',
+          }}
+        >
+          <h3 style={{ float: 'left' }}>{props.title}</h3>
+          <h4 style={{ float: 'right' }}>{formatDate(new Date(props.postid))}</h4>
+        </div>
+
+        <p>{props.content}</p>
       </div>
-
-      <p>{props.content}</p>
-    </div>
+    </motion.div>
   );
 }

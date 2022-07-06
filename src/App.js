@@ -8,15 +8,26 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import SendIcon from '@mui/icons-material/Send';
 import AnnouncementIcon from '@mui/icons-material/Announcement'
-
 import Portal from '@mui/base/Portal';
 
-const appStyle = {
-  display : 'flex',
-  flexDirection : 'column',
-  justifyContent : 'center',
-  alignItems : 'center',
-}
+import { AnimatePresence, motion } from "framer-motion";
+
+import './css/App.css';
+
+const expand = {
+  hidden: {
+    scale : 0.1
+  },
+  visible: {
+    scale : 1,
+    transition: {
+      duration: 0.1,
+      type: "spring",
+      damping: 25,
+      stiffness: 500,
+    },
+  },
+};
 
 export default function App() {
 
@@ -31,27 +42,18 @@ export default function App() {
   ]
 
   return (
-    <div className="App" style={appStyle}>
+    <div className="App">
 
       <div className="header"
-        style={{
-          width : '25%',
-          display : 'flex',
-          justifyContent : 'center',
-          flexDirection : 'column',
-          alignItems : 'center',
-
-          color : '#DEF2F1',
-          background : '#2B7A78',
-          borderRadius: '25px',
-          boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-        }}
+        component={motion.div}
+        onClick={(e) => e.stopPropagation()}  // Prevent click from closing modal
+        variants={expand}
+        initial="hidden"
+        animate="visible"
       >
         <h1>common blog</h1>
-
         <p><em>a blog for all</em></p>
       </div>
-
       
 
       <SpeedDial
@@ -72,19 +74,20 @@ export default function App() {
 
       <DisplayPosts
         censor={censor}
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-        }}
       />
 
-      {openCreatePost ? (
-        <Portal container={createPostContainer.current}>
-          <CreatePost onClose={() => setOpenCreatePost(false)} />
-        </Portal>
-      ) : null}
+      <AnimatePresence
+        initial={false}
+        exitBeforeEnter={true}
+      >
+        {openCreatePost && (
+          <Portal className='fade-in' container={createPostContainer.current}>
+            <CreatePost onClose={() => setOpenCreatePost(false)} />
+          </Portal>
+        )}
+      </AnimatePresence>
+
+
 
     </div>
   );

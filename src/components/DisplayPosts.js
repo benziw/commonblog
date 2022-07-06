@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs, query, orderBy, limit, startAfter } from 'firebase/firestore';
 import { db } from '../firebase-config';
 
+import { motion } from 'framer-motion';
+
 import Post from './Post.js';
 import Button from '@mui/material/Button';
 
@@ -68,7 +70,13 @@ export default function DisplayPosts(){
           onClick={() => morePostsOnClick()}
           variant='contained'
           color='secondary'
-          sx={{justifySelf : 'center', width : '80%', marginLeft : '10%'}}
+          sx={{justifySelf : 'center', width : '80%', marginLeft : '10%', }}
+          component={motion.button}
+          whileHover={{
+            scale: 1.1,
+            transition: { duration: 0.3 }
+          }}
+          whileTap={{ scale: 0.9 }}
         >more posts
         </Button>
       ) :
