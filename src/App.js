@@ -8,6 +8,7 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import SendIcon from '@mui/icons-material/Send';
 import AnnouncementIcon from '@mui/icons-material/Announcement'
+import GitHubIcon from '@mui/icons-material/GitHub';
 import Portal from '@mui/base/Portal';
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -38,7 +39,8 @@ export default function App() {
 
   const speedDialActions = [
     {icon : <SendIcon/>, name : 'post', onClick : () => setOpenCreatePost(true)},
-    {icon : <AnnouncementIcon/>, name : 'censor', onClick : () => setCensor(!censor)}
+    //{icon : <AnnouncementIcon/>, name : 'censor', onClick : () => setCensor(!censor)},
+    {icon : <GitHubIcon />, name : 'github', onClick : () => window.open("https://github.com/benziw/commonblog", "_blank")}
   ]
 
   return (
