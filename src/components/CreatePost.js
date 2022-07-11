@@ -5,8 +5,6 @@ import { db } from '../firebase-config.js';
 
 import '../css/CreatePost.css';
 
-import RichTextEditor from './RichTextEditor';
-
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField'
 import SendIcon from '@mui/icons-material/Send';
